@@ -104,24 +104,13 @@ class Shoes
       end
     end
 
-    private
-
-    def inspect_details
-      " \"#{@__app__.app_title}\""
-    end
-
-    def to_s_details
-      inspect_details
-    end
-
-    public
-
     DELEGATE_BLACKLIST = [:parent, :app]
 
     # class definitions are evaluated top to bottom, want to have all of them
     # so define at bottom
     DELEGATE_METHODS = ((Shoes::App.public_instance_methods(false) +
-                         Shoes::DSL.public_instance_methods) - DELEGATE_BLACKLIST).freeze
+                         Shoes::DSL.public_instance_methods) -
+                         DELEGATE_BLACKLIST).freeze
 
     def self.subscribe_to_dsl_methods(klazz)
       klazz.extend Forwardable unless klazz.is_a? Forwardable
@@ -133,6 +122,16 @@ class Shoes
     def self.new_dsl_method(name, &blk)
       define_method name, blk
       @method_subscribers.each { |klazz| klazz.def_delegator :app, name }
+    end
+
+    private
+
+    def inspect_details
+      " \"#{@__app__.app_title}\""
+    end
+
+    def to_s_details
+      inspect_details
     end
   end
 end
